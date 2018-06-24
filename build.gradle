@@ -34,6 +34,7 @@ allprojects {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        jcenter()
     }
 }
 
@@ -69,11 +70,29 @@ project(":html") {
 project(":core") {
     apply plugin: "java"
 
+    sourceSets.test.java.srcDirs = ["/test"]
 
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-        
+
+        testCompile('org.junit.jupiter:junit-jupiter-api:5.2.0')
+        testRuntime('org.junit.jupiter:junit-jupiter-engine:5.2.0')
+        testCompile "org.mockito:mockito-core:2.+"
+        testCompile group: 'org.mockito', name: 'mockito-junit-jupiter', version: '2.17.1'
+        compile group: 'name.falgout.jeffrey.testing.junit5', name: 'mockito-extension', version: '1.0.1'
+
+    }
+
+    test {
+
+        testLogging {
+            events "passed", "skipped", "failed"
+        }
+
+        reports {
+            html.enabled = true
+        }
     }
 }
 
