@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import hu.bp.linefollowerrobot.Car;
 import hu.bp.linefollowerrobot.CarStateChange;
 
@@ -21,7 +22,7 @@ public class GdxLinefollower extends ApplicationAdapter {
 	OrthographicCamera camera;
 
 	private Car car;
-	private int x, y, halfTrackWidth, wheelRadius;
+	private float x, y, halfTrackWidth, wheelRadius;
 	private double angle;
 	private Timer timer;
 	private Random rnd = new Random();
@@ -31,6 +32,9 @@ public class GdxLinefollower extends ApplicationAdapter {
 		shapeRenderer = new ShapeRenderer();
 		camera = new OrthographicCamera(600, 400);
 		setCar(new Car(30, 5));
+		Gdx.gl.glClearColor(0, 1, 0, 1);
+
+		//Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 	}
 
@@ -44,28 +48,24 @@ public class GdxLinefollower extends ApplicationAdapter {
 		angle = 0;
 	}
 
-	public void drawCar(CarStateChange carStateChange) {
-		x += carStateChange.x;
-		y += carStateChange.y;
-		angle += carStateChange.angle;
-	}
-
 	@Override
 	public void render () {
 		CarStateChange carStateChange = moveCar();
-		x += carStateChange.x;
-		y += carStateChange.y;
+		x += (float)carStateChange.x;
+		y += (float)carStateChange.y;
 		angle += carStateChange.angle;
+		Gdx.app.log("render",x + "," + y + "," + angle);
 
-		Gdx.gl.glClearColor(0, 1, 0, 1);
-
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		camera.position.set(x, y, camera.position.z);
 
 		camera.update();
-
-		shapeRenderer.setProjectionMatrix(camera.combined);
-
+		
 		drawCar();
+
+
+
+
+
 	}
 
 	private CarStateChange moveCar() {
@@ -73,7 +73,9 @@ public class GdxLinefollower extends ApplicationAdapter {
 	}
 
 	private void drawCar() {
+		//shapeRenderer.setProjectionMatrix(camera.combined);
 		shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+
 		shapeRenderer.setColor(Color.BLUE);
 
 		shapeRenderer.line(x - halfTrackWidth, y, x + halfTrackWidth, y);
