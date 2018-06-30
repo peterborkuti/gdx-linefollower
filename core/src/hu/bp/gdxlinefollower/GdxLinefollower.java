@@ -2,10 +2,8 @@ package hu.bp.gdxlinefollower;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -18,24 +16,21 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class GdxLinefollower extends ApplicationAdapter {
-	ShapeRenderer shapeRenderer;
-	OrthographicCamera camera;
+	public static final int WIDTH = 1000;
+	public static final int HEIGHT = 1000;
 
+	private ShapeRenderer renderer;
+	private Camera cam;
 	private Car car;
 	private float x, y, halfTrackWidth, wheelRadius;
 	private double angle;
-	private Timer timer;
 	private Random rnd = new Random();
 
 	@Override
 	public void create () {
-		shapeRenderer = new ShapeRenderer();
-		camera = new OrthographicCamera(600, 400);
+		renderer = new ShapeRenderer();
+		cam = new OrthographicCamera(WIDTH, HEIGHT);
 		setCar(new Car(30, 5));
-		Gdx.gl.glClearColor(0, 1, 0, 1);
-
-		//Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 	}
 
 	public void setCar(Car car) {
@@ -48,6 +43,44 @@ public class GdxLinefollower extends ApplicationAdapter {
 		angle = 0;
 	}
 
+	private void drawConcentricRoutes(ShapeRenderer renderer, Camera camera, int width, int space, int routeWidth) {
+		Gdx.gl.glClearColor(0, 1, 0, 1);
+
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+		renderer.setProjectionMatrix(cam.combined);
+
+		int x = - width / 2 - routeWidth;
+		int y = - space - routeWidth;
+		int squareHeight = 2 * space + 2 * routeWidth;
+		int squareWidth = width + 2 * routeWidth;
+
+		int delta = space + routeWidth;
+
+		renderer.begin(ShapeRenderer.ShapeType.Filled);
+
+		for (int i = 0; x > - WIDTH / 2 && y > - HEIGHT / 2; i++) {
+			drawRoute(renderer, x, y, squareWidth, squareHeight, routeWidth);
+
+			x -= delta;
+			y -= delta;
+			squareHeight += 2 * delta;
+			squareWidth += 2 * delta;
+		}
+
+		renderer.end();
+	}
+
+	private void drawRoute(ShapeRenderer renderer, int x, int y, int width, int height, int routeWidth) {
+		renderer.setColor(Color.BLUE);
+
+		renderer.rect(x, y, routeWidth, height); //left
+		renderer.rect(x, y + height - routeWidth, width, routeWidth); //top
+		renderer.rect(x, y, width, routeWidth); //bottom
+		renderer.rect(x + width, y, routeWidth, height); //right
+	}
+
+
 	@Override
 	public void render () {
 		CarStateChange carStateChange = moveCar();
@@ -56,40 +89,34 @@ public class GdxLinefollower extends ApplicationAdapter {
 		angle += carStateChange.angle;
 		Gdx.app.log("render",x + "," + y + "," + angle);
 
-		camera.position.set(x, y, camera.position.z);
+		drawConcentricRoutes(renderer, cam, 190, 90, 50);
 
-		camera.update();
-		
 		drawCar();
-
-
-
-
-
 	}
 
 	private CarStateChange moveCar() {
-		return car.move(Math.abs(rnd.nextInt(10)), Math.abs(rnd.nextInt(10)), 0.1);
+		int move = rnd.nextInt(9) - 4;
+		return car.move(move, move, 0.1);
 	}
 
 	private void drawCar() {
 		//shapeRenderer.setProjectionMatrix(camera.combined);
-		shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+		renderer.begin(ShapeRenderer.ShapeType.Line);
 
-		shapeRenderer.setColor(Color.BLUE);
+		renderer.setColor(Color.BLUE);
 
-		shapeRenderer.line(x - halfTrackWidth, y, x + halfTrackWidth, y);
-		shapeRenderer.line(x - halfTrackWidth, y - wheelRadius, x - halfTrackWidth, y + wheelRadius);
-		shapeRenderer.line(x + halfTrackWidth, y - wheelRadius, x + halfTrackWidth, y + wheelRadius);
+		renderer.line(x - halfTrackWidth, y, x + halfTrackWidth, y);
+		renderer.line(x - halfTrackWidth, y - wheelRadius, x - halfTrackWidth, y + wheelRadius);
+		renderer.line(x + halfTrackWidth, y - wheelRadius, x + halfTrackWidth, y + wheelRadius);
 
-		shapeRenderer.setColor(Color.RED);
+		renderer.setColor(Color.RED);
 
-		shapeRenderer.line(x, y, x, y + 4 * wheelRadius);
-		shapeRenderer.end();
+		renderer.line(x, y, x, y + 4 * wheelRadius);
+		renderer.end();
 	}
 
 	@Override
 	public void dispose () {
-		shapeRenderer.dispose();
+		renderer.dispose();
 	}
 }
