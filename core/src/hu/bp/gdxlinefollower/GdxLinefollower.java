@@ -16,8 +16,8 @@ public class GdxLinefollower extends ApplicationAdapter {
 	/**
 	 * The size of our world
 	 */
-	public static final int WORLD_WIDTH = 1000;
-	public static final int WORLD_HEIGHT = 1000;
+	public static final int WORLD_WIDTH = 10000;
+	public static final int WORLD_HEIGHT = 10000;
 
 	/**
 	 * Our users will see a square from our world which size
@@ -34,14 +34,14 @@ public class GdxLinefollower extends ApplicationAdapter {
 	 * the whole car do not set viewport size smaller than the size of
 	 * the car
 	 */
-	public static final int CAR_HEIGHT = 100;
+	public static final int CAR_HEIGHT = 50;
 	public static final int CAR_WIDTH = 100;
 
 	private ShapeRenderer renderer;
 	private Camera camera;
 
 	private Car car;
-	private float carWorldX, carWorldY, carWorldAngle;
+	private float carWorldX = 0, carWorldY = 0, carWorldAngle = 0;
 	private Random rnd = new Random();
 
 	private Routes routes;
@@ -59,33 +59,27 @@ public class GdxLinefollower extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		/*
-		CarStateChange carStateChange = moveCar();
-		x += (float)carStateChange.x;
-		y += (float)carStateChange.y;
-		angle += carStateChange.angle;
-		*/
+		moveCar();
+
 		Gdx.app.log("render",carWorldX + "," + carWorldY + "," + carWorldAngle);
 		Gdx.gl.glClearColor(0, 1, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-		moveCar();
-		//setCamera(renderer, carWorldX, carWorldY);
 
 		routes.drawConcentricRoutes(renderer, Color.BLUE, 190, 90, 50);
 
 		gdxCar.drawCar(camera, carWorldX, carWorldY, carWorldAngle);
 
-		Pixmap pixmap = ScreenUtils.getFrameBufferPixmap(0, 0, 1, 1);
-		Gdx.app.log("pixel:", "" + pixmap.getPixel(0, 0));
+		//Pixmap pixmap = ScreenUtils.getFrameBufferPixmap(0, 0, 1, 1);
+		//Gdx.app.log("pixel:", "" + pixmap.getPixel(0, 0));
 	}
 
 	private void moveCar() {
 		//int move = rnd.nextInt(9) - 4;
-		CarStateChange carStateChange = car.move(0.1, 1, 0.01);
+		CarStateChange carStateChange = car.move(10, 30, 0.001);
 		carWorldX += carStateChange.x;
 		carWorldY += carStateChange.y;
-		carWorldAngle += MathUtils.radDeg* carStateChange.angle;
+		carWorldAngle += MathUtils.radDeg * carStateChange.angle;
+		carWorldAngle %= 360;
 	}
 
 	@Override

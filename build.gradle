@@ -75,7 +75,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
 
-        compile 'com.github.peterborkuti:java-lightrobot:master'
+        compile 'com.github.peterborkuti:java-lightrobot:4b9d044a1d549274659fdb7fc9fc8c1f9289682f'
     }
 
 }
