@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.ScreenUtils;
 import hu.bp.linefollowerrobot.Car;
 import hu.bp.linefollowerrobot.CarStateChange;
 
@@ -37,7 +36,8 @@ public class GdxLinefollower extends ApplicationAdapter {
 	public static final int CAR_HEIGHT = 50;
 	public static final int CAR_WIDTH = 100;
 
-	private ShapeRenderer renderer;
+	private ShapeRenderer routesRenderer;
+	private ShapeRenderer carRenderer;
 	private Camera camera;
 
 	private Car car;
@@ -49,41 +49,31 @@ public class GdxLinefollower extends ApplicationAdapter {
 
 	@Override
 	public void create () {
-		renderer = new ShapeRenderer();
+		routesRenderer = new ShapeRenderer();
+		carRenderer = new ShapeRenderer();
 		routes = new Routes(WORLD_WIDTH, WORLD_HEIGHT);
-		car = new Car(CAR_WIDTH, CAR_HEIGHT / 2);
+		car = new Car(4, 1.166666667);
 		gdxCar = new GdxCar(car, CAR_WIDTH, CAR_HEIGHT);
 		camera = new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT);
-		renderer.setProjectionMatrix(camera.combined);
+		routesRenderer.setProjectionMatrix(camera.combined);
 	}
 
 	@Override
 	public void render () {
-		moveCar();
-
-		Gdx.app.log("render",carWorldX + "," + carWorldY + "," + carWorldAngle);
+		//Gdx.app.log("render",carWorldX + "," + carWorldY + "," + carWorldAngle);
 		Gdx.gl.glClearColor(0, 1, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		routes.drawConcentricRoutes(renderer, Color.BLUE, 190, 90, 50);
+		routes.drawConcentricRoutes(routesRenderer, Color.BLUE, 190, 90, 50);
 
-		gdxCar.drawCar(camera, carWorldX, carWorldY, carWorldAngle);
+		gdxCar.drawCar(camera, carRenderer, car.move(1, 1.1, 1));
 
 		//Pixmap pixmap = ScreenUtils.getFrameBufferPixmap(0, 0, 1, 1);
 		//Gdx.app.log("pixel:", "" + pixmap.getPixel(0, 0));
 	}
 
-	private void moveCar() {
-		//int move = rnd.nextInt(9) - 4;
-		CarStateChange carStateChange = car.move(10, 30, 0.001);
-		carWorldX += carStateChange.x;
-		carWorldY += carStateChange.y;
-		carWorldAngle += MathUtils.radDeg * carStateChange.angle;
-		carWorldAngle %= 360;
-	}
-
 	@Override
 	public void dispose () {
-		renderer.dispose();
+		routesRenderer.dispose();
 	}
 }
