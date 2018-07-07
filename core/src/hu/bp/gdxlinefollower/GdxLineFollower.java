@@ -2,16 +2,13 @@ package hu.bp.gdxlinefollower;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.graphics.GL20;
 import hu.bp.linefollowerrobot.Car;
-import hu.bp.linefollowerrobot.CarStateChange;
 
 import java.util.Random;
 
-public class GdxLinefollower extends ApplicationAdapter {
+public class GdxLineFollower extends ApplicationAdapter {
 	/**
 	 * The size of our world
 	 */
@@ -71,7 +68,7 @@ public class GdxLinefollower extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0, 1, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		routes.drawRoutes(Color.RED);
+		routes.drawRoutes(Color.BLUE);
 
 		randomDriving();
 

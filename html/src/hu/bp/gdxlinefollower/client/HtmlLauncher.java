@@ -3,7 +3,7 @@ package hu.bp.gdxlinefollower.client;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
-import hu.bp.gdxlinefollower.GdxLinefollower;
+import hu.bp.gdxlinefollower.GdxLineFollower;
 
 public class HtmlLauncher extends GwtApplication {
 
@@ -46,6 +46,6 @@ public class HtmlLauncher extends GwtApplication {
 
         @Override
         public ApplicationListener createApplicationListener () {
-                return new GdxLinefollower();
+                return new GdxLineFollower();
         }
 }

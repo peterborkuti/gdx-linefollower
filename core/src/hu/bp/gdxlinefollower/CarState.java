@@ -6,12 +6,12 @@ public class CarState {
 	public final float x;
 	public final float y;
 	public final float directionInDegrees;
-	public final float directionInRadiaans;
+	public final float directionInRadians;
 
-	public CarState(float x, float y, float directionInRadiaans) {
+	public CarState(float x, float y, float directionInRadians) {
 		this.x = x;
 		this.y = y;
-		this.directionInRadiaans = directionInRadiaans;
-		this.directionInDegrees = MathUtils.radiansToDegrees * directionInRadiaans;
+		this.directionInRadians = directionInRadians;
+		this.directionInDegrees = MathUtils.radiansToDegrees * directionInRadians;
 	}
 }

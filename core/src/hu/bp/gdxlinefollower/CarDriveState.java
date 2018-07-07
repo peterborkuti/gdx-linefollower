@@ -40,6 +40,7 @@ public enum CarDriveState {
 
 	public static CarDriveState getState(int index) {
 		int len = CarDriveState.values().length;
+
 		if (index < 0 || index >= len) {
 			throw new IndexOutOfBoundsException("Index must be between 0 and " + len +". Actual value:" + index);
 		}

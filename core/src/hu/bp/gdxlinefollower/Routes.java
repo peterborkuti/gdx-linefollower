@@ -1,9 +1,6 @@
 package hu.bp.gdxlinefollower;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -29,14 +26,6 @@ public class Routes {
 		return rectangles.stream().anyMatch(i -> i.contains(carState.x, carState.y));
 	}
 
-	public void drawCross() {
-		renderer.begin(ShapeRenderer.ShapeType.Line);
-		renderer.setColor(Color.BLACK);
-		renderer.line(- WORLD_WIDTH / 2, - WORLD_HEIGHT / 2, WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
-		renderer.line(- WORLD_WIDTH / 2, WORLD_HEIGHT / 2, WORLD_WIDTH / 2, - WORLD_HEIGHT / 2);
-		renderer.end();
-	}
-
 	public void createConcentricRoutes(int width, int space, int routeWidth) {
 		int x = - width / 2 - routeWidth;
 		int y = - space - routeWidth;
@@ -59,9 +48,7 @@ public class Routes {
 		renderer.setColor(color);
 		renderer.begin(ShapeRenderer.ShapeType.Filled);
 
-		for (Rectangle rect: rectangles) {
-			renderer.rect(rect.x, rect.y, rect.width, rect. height);
-		}
+		rectangles.forEach(rect -> renderer.rect(rect.x, rect.y, rect.width, rect. height));
 
 		renderer.end();
 	}

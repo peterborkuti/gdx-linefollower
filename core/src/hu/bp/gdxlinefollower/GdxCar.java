@@ -1,12 +1,10 @@
 package hu.bp.gdxlinefollower;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Matrix3;
 import hu.bp.linefollowerrobot.Car;
 import org.ejml.simple.SimpleMatrix;
 
@@ -30,17 +28,19 @@ public class GdxCar {
 		return driveCar(state.leftLinearVelocity, state.rightLinearVelocity, state.time);
 	}
 
-	public CarState goStaright(float velocity, float timeInMinutes) {
+	public CarState goStraight(float velocity, float timeInMinutes) {
 		float s = velocity * timeInMinutes;
-		float dx = s * (float)Math.cos(carState.directionInRadiaans);
-		float dy = s * (float)Math.sin(carState.directionInRadiaans);
+		float dx = s * (float)Math.cos(carState.directionInRadians);
+		float dy = s * (float)Math.sin(carState.directionInRadians);
 
-		return new CarState(carState.x + dx, carState.y + dy, carState.directionInRadiaans);
+		return new CarState(carState.x + dx, carState.y + dy, carState.directionInRadians);
 	}
 
 	/**
 	 * return with the new car state if the car moves from the current position and direction
 	 * with the given motor RPM for the given time
+	 *
+	 * for more info, see the car'f forward kinematics in the docs
 	 *
 	 * @param leftWheelLinearVelocity
 	 * @param rightWheelLinearVelocity
@@ -51,7 +51,7 @@ public class GdxCar {
 
 	public CarState driveCar(float leftWheelLinearVelocity, float rightWheelLinearVelocity, float timeInMinutes) {
 		if (leftWheelLinearVelocity == rightWheelLinearVelocity) {
-			return goStaright(leftWheelLinearVelocity, timeInMinutes);
+			return goStraight(leftWheelLinearVelocity, timeInMinutes);
 		}
 
 		float vr = rightWheelLinearVelocity, vl = leftWheelLinearVelocity, l = (float)car.trackWidth;
@@ -59,10 +59,9 @@ public class GdxCar {
 		float R = l / 2F * (vl + vr) / (vr - vl);
 		float omega = (vr - vl) / l;
 
-		float ICCx = carState.x - R * (float) Math.sin(carState.directionInRadiaans);
-		float ICCy = carState.y + R * (float) Math.cos(carState.directionInRadiaans);
+		float ICCx = carState.x - R * (float) Math.sin(carState.directionInRadians);
+		float ICCy = carState.y + R * (float) Math.cos(carState.directionInRadians);
 
-		Matrix3 m1 = new Matrix3();
 		float omegat = omega * timeInMinutes;
 		double cos = Math.cos(omegat);
 		double sin = Math.sin(omegat);
@@ -83,7 +82,7 @@ public class GdxCar {
 
 		SimpleMatrix out = A.mult(B).plus(C);
 
-		return new CarState((float) out.get(0, 0), (float) out.get(1, 0), carState.directionInRadiaans + omega);
+		return new CarState((float) out.get(0, 0), (float) out.get(1, 0), carState.directionInRadians + omega);
 	}
 
 	/**
@@ -91,7 +90,7 @@ public class GdxCar {
 	 * @param carState
 	 */
 	public void drawCar(CarState carState) {
-		drawCar(carState.x, carState.y, carState.directionInRadiaans);
+		drawCar(carState.x, carState.y, carState.directionInRadians);
 	}
 
 	public void setState(CarState carState) {
