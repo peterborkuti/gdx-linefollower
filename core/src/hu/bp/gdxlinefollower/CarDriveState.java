@@ -46,6 +46,4 @@ public enum CarDriveState {
 
 		return CarDriveState.values()[index];
 	}
-
-
 }

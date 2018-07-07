@@ -4,18 +4,32 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Routes {
-	private int WORLD_WIDTH;
-	private int WORLD_HEIGHT;
+	private final int WORLD_WIDTH;
+	private final int WORLD_HEIGHT;
+	private final List<Rectangle> rectangles;
+	private final ShapeRenderer renderer;
 
 	public Routes(int WORLD_WIDTH, int WORLD_HEIGHT) {
 		this.WORLD_WIDTH = WORLD_WIDTH;
 		this.WORLD_HEIGHT = WORLD_HEIGHT;
+		rectangles = new ArrayList<>();
+		renderer = new ShapeRenderer();
+		renderer.setProjectionMatrix(new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT).combined);
 	}
 
-	public void drawCross(ShapeRenderer renderer) {
+	public boolean isOnRoute(CarState carState) {
+		return rectangles.stream().anyMatch(i -> i.contains(carState.x, carState.y));
+	}
+
+	public void drawCross() {
 		renderer.begin(ShapeRenderer.ShapeType.Line);
 		renderer.setColor(Color.BLACK);
 		renderer.line(- WORLD_WIDTH / 2, - WORLD_HEIGHT / 2, WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
@@ -23,7 +37,7 @@ public class Routes {
 		renderer.end();
 	}
 
-	public void drawConcentricRoutes(ShapeRenderer renderer, Color color, int width, int space, int routeWidth) {
+	public void createConcentricRoutes(int width, int space, int routeWidth) {
 		int x = - width / 2 - routeWidth;
 		int y = - space - routeWidth;
 		int squareHeight = 2 * space + 2 * routeWidth;
@@ -31,26 +45,31 @@ public class Routes {
 
 		int delta = space + routeWidth;
 
-		renderer.begin(ShapeRenderer.ShapeType.Filled);
-
 		for (int i = 0; x > -WORLD_WIDTH / 2 && y > -WORLD_HEIGHT / 2; i++) {
-			drawRoute(renderer, color, x, y, squareWidth, squareHeight, routeWidth);
+			createRoute(x, y, squareWidth, squareHeight, routeWidth);
 
 			x -= delta;
 			y -= delta;
 			squareHeight += 2 * delta;
 			squareWidth += 2 * delta;
 		}
+	}
+
+	public void drawRoutes(Color color) {
+		renderer.setColor(color);
+		renderer.begin(ShapeRenderer.ShapeType.Filled);
+
+		for (Rectangle rect: rectangles) {
+			renderer.rect(rect.x, rect.y, rect.width, rect. height);
+		}
 
 		renderer.end();
 	}
 
-	private void drawRoute(ShapeRenderer renderer, Color color, int x, int y, int width, int height, int routeWidth) {
-		renderer.setColor(color);
-
-		renderer.rect(x, y, routeWidth, height); //left
-		renderer.rect(x, y + height - routeWidth, width, routeWidth); //top
-		renderer.rect(x, y, width, routeWidth); //bottom
-		renderer.rect(x + width, y, routeWidth, height); //right
+	private void createRoute(int x, int y, int width, int height, int routeWidth) {
+		rectangles.add(new Rectangle(x, y, routeWidth, height)); //left
+		rectangles.add(new Rectangle(x, y + height - routeWidth, width, routeWidth)); //top
+		rectangles.add(new Rectangle(x, y, width, routeWidth)); //bottom
+		rectangles.add(new Rectangle(x + width, y, routeWidth, height)); //right
 	}
 }

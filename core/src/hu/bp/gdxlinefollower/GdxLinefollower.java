@@ -36,12 +36,6 @@ public class GdxLinefollower extends ApplicationAdapter {
 	public static final int CAR_HEIGHT = 50;
 	public static final int CAR_WIDTH = 100;
 
-	private ShapeRenderer routesRenderer;
-	private ShapeRenderer carRenderer;
-	private Camera camera;
-
-	private Car car;
-	private float carWorldX = 0, carWorldY = 0, carWorldAngle = 0;
 	private Random rnd = new Random();
 
 	private Routes routes;
@@ -52,40 +46,38 @@ public class GdxLinefollower extends ApplicationAdapter {
 
 	@Override
 	public void create () {
-		routesRenderer = new ShapeRenderer();
-		carRenderer = new ShapeRenderer();
 		routes = new Routes(WORLD_WIDTH, WORLD_HEIGHT);
-		car = new Car(40, 11.66666667);
+		Car car = new Car(40, 11.66666667);
 		gdxCar = new GdxCar(car, WORLD_WIDTH, WORLD_HEIGHT,  WORLD_WIDTH, WORLD_HEIGHT);
-		camera = new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT);
-		routesRenderer.setProjectionMatrix(camera.combined);
+		routes.createConcentricRoutes(190, 90, 50);
 	}
 
-	@Override
-	public void render () {
-		//Gdx.app.log("render",carWorldX + "," + carWorldY + "," + carWorldAngle);
-		Gdx.gl.glClearColor(0, 1, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-		routes.drawConcentricRoutes(routesRenderer, Color.BLUE, 190, 90, 50);
-		routes.drawCross(routesRenderer);
+	public void randomDriving() {
 		counter--;
+
 		if (counter < 0) {
 			counter = rnd.nextInt(100);
+
 			driveState = CarDriveState.getRandomState();
 		}
 
 		CarState carState = gdxCar.goCar(driveState);
+
 		gdxCar.setState(carState);
-
-		gdxCar.drawCar(carState);
-
-		//Pixmap pixmap = ScreenUtils.getFrameBufferPixmap(0, 0, 1, 1);
-		//Gdx.app.log("pixel:", "" + pixmap.getPixel(0, 0));
 	}
 
 	@Override
-	public void dispose () {
-		routesRenderer.dispose();
+	public void render () {
+		Gdx.gl.glClearColor(0, 1, 0, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+		routes.drawRoutes(Color.RED);
+
+		randomDriving();
+
+		gdxCar.drawCar();
+
+		CarState carState = gdxCar.getState();
+		Gdx.app.log("car on route", "" + routes.isOnRoute(carState));
 	}
 }

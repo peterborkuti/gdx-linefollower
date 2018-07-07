@@ -30,6 +30,14 @@ public class GdxCar {
 		return driveCar(state.leftLinearVelocity, state.rightLinearVelocity, state.time);
 	}
 
+	public CarState goStaright(float velocity, float timeInMinutes) {
+		float s = velocity * timeInMinutes;
+		float dx = s * (float)Math.cos(carState.directionInRadiaans);
+		float dy = s * (float)Math.sin(carState.directionInRadiaans);
+
+		return new CarState(carState.x + dx, carState.y + dy, carState.directionInRadiaans);
+	}
+
 	/**
 	 * return with the new car state if the car moves from the current position and direction
 	 * with the given motor RPM for the given time
@@ -43,12 +51,7 @@ public class GdxCar {
 
 	public CarState driveCar(float leftWheelLinearVelocity, float rightWheelLinearVelocity, float timeInMinutes) {
 		if (leftWheelLinearVelocity == rightWheelLinearVelocity) {
-			Gdx.app.log("drive car", "straight");
-			float s = leftWheelLinearVelocity * timeInMinutes;
-			float dx = s * (float)Math.cos(carState.directionInRadiaans);
-			float dy = s * (float)Math.sin(carState.directionInRadiaans);
-
-			return new CarState(carState.x + dx, carState.y + dy, carState.directionInRadiaans);
+			return goStaright(leftWheelLinearVelocity, timeInMinutes);
 		}
 
 		float vr = rightWheelLinearVelocity, vl = leftWheelLinearVelocity, l = (float)car.trackWidth;
@@ -95,6 +98,14 @@ public class GdxCar {
 		this.carState = carState;
 	}
 
+	public CarState getState() {
+		return carState;
+	}
+
+	public void drawCar() {
+		drawCar(carState);
+	}
+
 	/**
 	 * draws car in the world
 	 *
@@ -112,12 +123,10 @@ public class GdxCar {
 
 		renderer.setProjectionMatrix(camera.combined);
 
-		Gdx.app.log("drawCar ", carCenterInWorldCoordX + "," + carCenterInWorldCoordY + "," + degrees);
-
-		drawCar();
+		_drawCar();
 	}
 
-	private void drawCar() {
+	private void _drawCar() {
 		float wheelDia = (float) car.wheelDiameter;
 		float width = (float) car.trackWidth;
 
