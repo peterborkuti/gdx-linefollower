@@ -4,7 +4,12 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import hu.bp.ai.agents.TemporalDifferenceAgent;
+import hu.bp.ai.interfaces.Agent;
+import hu.bp.ai.interfaces.Environment;
 import hu.bp.linefollowerrobot.Car;
+import hu.bp.rl.LineFollowerAgent;
+import hu.bp.rl.World;
 
 import java.util.Random;
 
@@ -41,12 +46,20 @@ public class GdxLineFollower extends ApplicationAdapter {
 	private long counter = 0;
 	private CarDriveState driveState;
 
+	private Environment world;
+	private TemporalDifferenceAgent agent;
+
 	@Override
 	public void create () {
 		routes = new Routes(WORLD_WIDTH, WORLD_HEIGHT);
 		Car car = new Car(40, 11.66666667);
 		gdxCar = new GdxCar(car, WORLD_WIDTH, WORLD_HEIGHT,  WORLD_WIDTH, WORLD_HEIGHT);
 		routes.createConcentricRoutes(190, 90, 50);
+
+		world = new World(gdxCar, routes);
+		agent = new LineFollowerAgent(world, 0.1, 0.1);
+
+		agent.controlQLearning(1000, 1000, 0.5, 0.5);
 	}
 
 	public void randomDriving() {
@@ -70,11 +83,10 @@ public class GdxLineFollower extends ApplicationAdapter {
 
 		routes.drawRoutes(Color.BLUE);
 
-		randomDriving();
+		if (!agent.oneStep()) {
+			agent.controlQLearning(1000, 1000, 0.5, 0.5);
+		}
 
 		gdxCar.drawCar();
-
-		CarState carState = gdxCar.getState();
-		Gdx.app.log("car on route", "" + routes.isOnRoute(carState));
 	}
 }
