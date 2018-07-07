@@ -15,6 +15,14 @@ public class Routes {
 		this.WORLD_HEIGHT = WORLD_HEIGHT;
 	}
 
+	public void drawCross(ShapeRenderer renderer) {
+		renderer.begin(ShapeRenderer.ShapeType.Line);
+		renderer.setColor(Color.BLACK);
+		renderer.line(- WORLD_WIDTH / 2, - WORLD_HEIGHT / 2, WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
+		renderer.line(- WORLD_WIDTH / 2, WORLD_HEIGHT / 2, WORLD_WIDTH / 2, - WORLD_HEIGHT / 2);
+		renderer.end();
+	}
+
 	public void drawConcentricRoutes(ShapeRenderer renderer, Color color, int width, int space, int routeWidth) {
 		int x = - width / 2 - routeWidth;
 		int y = - space - routeWidth;

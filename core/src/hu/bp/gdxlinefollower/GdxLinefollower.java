@@ -15,8 +15,8 @@ public class GdxLinefollower extends ApplicationAdapter {
 	/**
 	 * The size of our world
 	 */
-	public static final int WORLD_WIDTH = 10000;
-	public static final int WORLD_HEIGHT = 10000;
+	public static final int WORLD_WIDTH = 1000;
+	public static final int WORLD_HEIGHT = 1000;
 
 	/**
 	 * Our users will see a square from our world which size
@@ -47,13 +47,16 @@ public class GdxLinefollower extends ApplicationAdapter {
 	private Routes routes;
 	private GdxCar gdxCar;
 
+	private long counter = 0;
+	private CarDriveState driveState;
+
 	@Override
 	public void create () {
 		routesRenderer = new ShapeRenderer();
 		carRenderer = new ShapeRenderer();
 		routes = new Routes(WORLD_WIDTH, WORLD_HEIGHT);
-		car = new Car(4, 1.166666667);
-		gdxCar = new GdxCar(car, CAR_WIDTH, CAR_HEIGHT);
+		car = new Car(40, 11.66666667);
+		gdxCar = new GdxCar(car, WORLD_WIDTH, WORLD_HEIGHT,  WORLD_WIDTH, WORLD_HEIGHT);
 		camera = new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT);
 		routesRenderer.setProjectionMatrix(camera.combined);
 	}
@@ -65,8 +68,17 @@ public class GdxLinefollower extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		routes.drawConcentricRoutes(routesRenderer, Color.BLUE, 190, 90, 50);
+		routes.drawCross(routesRenderer);
+		counter--;
+		if (counter < 0) {
+			counter = rnd.nextInt(100);
+			driveState = CarDriveState.getRandomState();
+		}
 
-		gdxCar.drawCar(camera, carRenderer, car.move(1, 1.1, 1));
+		CarState carState = gdxCar.goCar(driveState);
+		gdxCar.setState(carState);
+
+		gdxCar.drawCar(carState);
 
 		//Pixmap pixmap = ScreenUtils.getFrameBufferPixmap(0, 0, 1, 1);
 		//Gdx.app.log("pixel:", "" + pixmap.getPixel(0, 0));
