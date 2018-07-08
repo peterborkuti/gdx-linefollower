@@ -8,18 +8,13 @@ import hu.bp.gdxlinefollower.CarDriveState;
 import java.util.stream.IntStream;
 
 public class LineFollowerAgent extends TemporalDifferenceAgent {
-	public LineFollowerAgent(Environment world, double stepSize, double epsilon) {
-		super(world, stepSize, epsilon);
+	public LineFollowerAgent(Environment world) {
+		super(world, 0.1,0.1,1, 1000, 0.5, 0.5);
 	}
 
 	@Override
 	public int getNumberOfActions() {
 		return CarDriveState.values().length;
-	}
-
-	@Override
-	public int getAction(int state) {
-		return 0;
 	}
 
 	@Override

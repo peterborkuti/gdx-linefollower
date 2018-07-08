@@ -1,5 +1,6 @@
 package hu.bp.rl;
 
+import com.badlogic.gdx.Gdx;
 import hu.bp.ai.interfaces.Environment;
 import hu.bp.ai.rl.Step;
 import hu.bp.gdxlinefollower.CarDriveState;
@@ -24,21 +25,18 @@ public class World implements Environment {
 
 	@Override
 	public int reset() {
+		Gdx.app.log("World", "RESET");
 		gdxCar.setState(new CarState(0, 0, 0));
 
 		return getOnRoute();
 	}
 
 	private int getReward(int onRoute, int action) {
-		if (onRoute == 0) {
-			return -1;
-		}
 
-		if (CarDriveState.FORWARD.equals(CarDriveState.getState(action))) {
-			return 10;
-		}
+		int reward = onRoute == 0 ? -100 : CarDriveState.getState(action).actionValue * 10;
+		Gdx.app.log("World","action:" + CarDriveState.getState(action).name() + ", onRoad:" + onRoute + " -> reward:" + reward);
 
-		return 1;
+		return reward;
 	}
 
 	@Override

@@ -54,12 +54,12 @@ public class GdxLineFollower extends ApplicationAdapter {
 		routes = new Routes(WORLD_WIDTH, WORLD_HEIGHT);
 		Car car = new Car(40, 11.66666667);
 		gdxCar = new GdxCar(car, WORLD_WIDTH, WORLD_HEIGHT,  WORLD_WIDTH, WORLD_HEIGHT);
-		routes.createConcentricRoutes(190, 90, 50);
+		routes.createConcentricRoutes(190, 90, 1);
 
 		world = new World(gdxCar, routes);
-		agent = new LineFollowerAgent(world, 0.1, 0.1);
+		agent = new LineFollowerAgent(world);
 
-		agent.controlQLearning(1000, 1000, 0.5, 0.5);
+		agent.controlQLearning();
 	}
 
 	public void randomDriving() {
@@ -76,17 +76,19 @@ public class GdxLineFollower extends ApplicationAdapter {
 		gdxCar.setState(carState);
 	}
 
+	private void qLearning() {
+		if (!agent.oneStep()) {
+			agent.controlQLearning();
+		}
+	}
+
 	@Override
 	public void render () {
 		Gdx.gl.glClearColor(0, 1, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		routes.drawRoutes(Color.BLUE);
-
-		if (!agent.oneStep()) {
-			agent.controlQLearning(1000, 1000, 0.5, 0.5);
-		}
-
+		qLearning();
 		gdxCar.drawCar();
 	}
 }
