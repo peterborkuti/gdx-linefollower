@@ -1,16 +1,19 @@
 package hu.bp.gdxlinefollower;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 import hu.bp.linefollowerrobot.Car;
 import org.ejml.simple.SimpleMatrix;
 
 public class GdxCar {
 	private Car car;
 	private ShapeRenderer renderer;
+	private ShapeRenderer invRenderer;
 	private Camera camera;
 	private float worldWidth, worldHeight;
 	private CarState carState;
@@ -22,6 +25,7 @@ public class GdxCar {
 		this.worldHeight = worldHeight;
 		renderer = new ShapeRenderer();
 		carState = new CarState(0, 0, 0);
+		invRenderer = new ShapeRenderer();
 	}
 
 	public CarState goCar(CarDriveState state) {
@@ -114,6 +118,7 @@ public class GdxCar {
 	 */
 	public void drawCar(float carCenterInWorldCoordX, float carCenterInWorldCoordY, float absoluteCarDirectionInRadians) {
 		float degrees = MathUtils.radiansToDegrees * absoluteCarDirectionInRadians;
+
 		renderer.identity();
 
 		renderer.translate(carCenterInWorldCoordX, carCenterInWorldCoordY, 0);
@@ -121,6 +126,11 @@ public class GdxCar {
 		renderer.rotate(0, 0, 1F, degrees - 90);
 
 		renderer.setProjectionMatrix(camera.combined);
+
+		invRenderer.identity();
+		invRenderer.rotate(0, 0, 1F, -degrees + 90);
+		invRenderer.translate(-carCenterInWorldCoordX, -carCenterInWorldCoordY, 0);
+
 
 		_drawCar();
 	}
@@ -156,5 +166,11 @@ public class GdxCar {
 		renderer.rect(cx + width - wheelThickness, cy - wheelDia / 2, wheelThickness, wheelDia);
 
 		renderer.end();
+
+		//renderer.getTransformMatrix().rotate(renderer.setTransformMatrix();)
+
+		//invRenderer.g
+		Gdx.app.log("GdxCar", "left:" + new Vector3(cx, cy, 0));
+		Gdx.app.log("GdxCar", "right:" + camera.unproject(new Vector3(cx + width, cy, 0)));
 	}
 }

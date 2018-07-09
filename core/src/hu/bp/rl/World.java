@@ -34,7 +34,7 @@ public class World implements Environment {
 	private int getReward(int onRoute, int action) {
 
 		int reward = onRoute == 0 ? -100 : CarDriveState.getState(action).actionValue * 10;
-		Gdx.app.log("World","action:" + CarDriveState.getState(action).name() + ", onRoad:" + onRoute + " -> reward:" + reward);
+		//Gdx.app.log("World","action:" + CarDriveState.getState(action).name() + ", onRoad:" + onRoute + " -> reward:" + reward);
 
 		return reward;
 	}
