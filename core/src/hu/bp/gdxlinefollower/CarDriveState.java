@@ -4,7 +4,8 @@ import java.util.Random;
 
 public enum CarDriveState {
 	FORWARD (1, 1, 1, 3),
-	LEFT (-1, 1, 1, 1);
+	LEFT (-1, 1, 1, 1),
+	RIGHT (1, -1, 1, 1);
 
 	public final float leftLinearVelocity;
 	public final float rightLinearVelocity;

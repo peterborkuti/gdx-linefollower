@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +26,8 @@ public class Routes {
 		renderer.setProjectionMatrix(new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT).combined);
 	}
 
-	public boolean isOnRoute(CarState carState) {
-		return rectangles.stream().anyMatch(i -> i.contains(carState.x, carState.y));
+	public boolean isOnRoute(Vector3 point) {
+		return rectangles.stream().anyMatch(i -> i.contains(point.x, point.y));
 	}
 
 	public void createConcentricRoutes(int width, int space, int routeWidth) {

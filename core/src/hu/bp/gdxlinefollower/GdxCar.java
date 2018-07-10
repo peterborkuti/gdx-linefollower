@@ -6,17 +6,23 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import hu.bp.linefollowerrobot.Car;
 import org.ejml.simple.SimpleMatrix;
 
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
 public class GdxCar {
+	public final int SENSOR_NUM = 3;
 	private Car car;
 	private ShapeRenderer renderer;
 	private ShapeRenderer invRenderer;
 	private Camera camera;
 	private float worldWidth, worldHeight;
 	private CarState carState;
+	private Vector3[] sensorPositionsInWorldCoordinates = new Vector3[SENSOR_NUM];
 
 	public GdxCar(Car car, int viewPortWidth, int viewPortHeight, int worldWidth, int worldHeight) {
 		this.car = car;
@@ -25,7 +31,11 @@ public class GdxCar {
 		this.worldHeight = worldHeight;
 		renderer = new ShapeRenderer();
 		carState = new CarState(0, 0, 0);
-		invRenderer = new ShapeRenderer();
+		Arrays.setAll(sensorPositionsInWorldCoordinates, i -> Vector3.Zero);
+	}
+
+	public Vector3[] getSensorsWordCoordinates() {
+		return Arrays.copyOf(sensorPositionsInWorldCoordinates, SENSOR_NUM);
 	}
 
 	public CarState goCar(CarDriveState state) {
@@ -127,12 +137,14 @@ public class GdxCar {
 
 		renderer.setProjectionMatrix(camera.combined);
 
-		invRenderer.identity();
-		invRenderer.rotate(0, 0, 1F, -degrees + 90);
-		invRenderer.translate(-carCenterInWorldCoordX, -carCenterInWorldCoordY, 0);
-
-
 		_drawCar();
+	}
+
+	private Vector3 toWorldCoordinate(float x, float y) {
+		Vector3 coordInRenderer = new Vector3(x, y, 0);
+		Vector3 coordInWorld = coordInRenderer.prj(renderer.getTransformMatrix());
+
+		return coordInWorld;
 	}
 
 	private void _drawCar() {
@@ -167,10 +179,8 @@ public class GdxCar {
 
 		renderer.end();
 
-		//renderer.getTransformMatrix().rotate(renderer.setTransformMatrix();)
-
-		//invRenderer.g
-		Gdx.app.log("GdxCar", "left:" + new Vector3(cx, cy, 0));
-		Gdx.app.log("GdxCar", "right:" + camera.unproject(new Vector3(cx + width, cy, 0)));
+		sensorPositionsInWorldCoordinates[0] = toWorldCoordinate(cx, cy);
+		sensorPositionsInWorldCoordinates[1] = toWorldCoordinate(0, 0);
+		sensorPositionsInWorldCoordinates[2] = toWorldCoordinate(cx + width, cy);
 	}
 }

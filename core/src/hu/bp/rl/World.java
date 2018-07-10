@@ -1,6 +1,7 @@
 package hu.bp.rl;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector3;
 import hu.bp.ai.interfaces.Environment;
 import hu.bp.ai.rl.Step;
 import hu.bp.gdxlinefollower.CarDriveState;
@@ -18,7 +19,8 @@ public class World implements Environment {
 	}
 
 	private int getOnRoute() {
-		boolean onRoute = routes.isOnRoute(gdxCar.getState());
+		Vector3[] sensors = gdxCar.getSensorsWordCoordinates();
+		boolean onRoute = !routes.isOnRoute(sensors[0]) && routes.isOnRoute(sensors[1]) && !routes.isOnRoute(sensors[2]);
 
 		return onRoute ? 1 : 0;
 	}
@@ -34,8 +36,9 @@ public class World implements Environment {
 	private int getReward(int onRoute, int action) {
 
 		int reward = onRoute == 0 ? -100 : CarDriveState.getState(action).actionValue * 10;
-		//Gdx.app.log("World","action:" + CarDriveState.getState(action).name() + ", onRoad:" + onRoute + " -> reward:" + reward);
-
+		if (onRoute == 1) {
+			Gdx.app.log("World", "action:" + CarDriveState.getState(action).name() + ", onRoad:" + onRoute + " -> reward:" + reward);
+		}
 		return reward;
 	}
 
