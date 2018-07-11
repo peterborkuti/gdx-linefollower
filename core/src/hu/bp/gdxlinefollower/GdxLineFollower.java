@@ -54,7 +54,7 @@ public class GdxLineFollower extends ApplicationAdapter {
 		routes = new Routes(WORLD_WIDTH, WORLD_HEIGHT);
 		Car car = new Car(40, 11.66666667);
 		gdxCar = new GdxCar(car, WORLD_WIDTH, WORLD_HEIGHT,  WORLD_WIDTH, WORLD_HEIGHT);
-		routes.createConcentricRoutes(190, 90, 10);
+		routes.createRandomRoutes(10, 90, 50);
 
 		world = new World(gdxCar, routes);
 		agent = new LineFollowerAgent(world);

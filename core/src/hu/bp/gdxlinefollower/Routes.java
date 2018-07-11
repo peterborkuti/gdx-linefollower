@@ -11,6 +11,10 @@ import com.badlogic.gdx.math.Vector3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Routes {
 	private final int WORLD_WIDTH;
@@ -27,7 +31,40 @@ public class Routes {
 	}
 
 	public boolean isOnRoute(Vector3 point) {
-		return rectangles.stream().anyMatch(i -> i.contains(point.x, point.y));
+		boolean onRoute = rectangles.stream().anyMatch(i -> i.contains(point.x, point.y));
+
+		if (onRoute) {
+			Gdx.app.log("Routes", "onroute");
+		}
+
+		return onRoute;
+	}
+
+	public void createRandomRoutes(int maxWidth, int minLength, int numberOfRoutes) {
+		rectangles.addAll(
+				IntStream.range(0, numberOfRoutes).parallel().boxed().
+						map(i -> getRandomRoute(maxWidth, minLength)).
+						collect(Collectors.toList()));
+	}
+
+	private Rectangle getRandomRoute(int maxWidth, int minLength) {
+		Random rnd = new Random();
+
+		int x = rnd.nextInt(WORLD_WIDTH);
+		int y = rnd.nextInt(WORLD_HEIGHT);
+
+		int width, height;
+
+		if (rnd.nextBoolean()) {
+			width = 10 + rnd.nextInt(maxWidth);
+			height = rnd.nextInt() + minLength;
+		}
+		else {
+			height = 10 + rnd.nextInt(maxWidth);
+			width = rnd.nextInt() + minLength;
+		}
+
+		return new Rectangle(x, y, width, height);
 	}
 
 	public void createConcentricRoutes(int width, int space, int routeWidth) {

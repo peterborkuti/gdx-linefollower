@@ -12,6 +12,7 @@ import hu.bp.gdxlinefollower.Routes;
 public class World implements Environment {
 	private GdxCar gdxCar;
 	private Routes routes;
+	private long counter = 0;
 
 	public World(GdxCar gdxCar, Routes routes) {
 		this.gdxCar = gdxCar;
@@ -20,9 +21,16 @@ public class World implements Environment {
 
 	private int getOnRoute() {
 		Vector3[] sensors = gdxCar.getSensorsWordCoordinates();
-		boolean onRoute = !routes.isOnRoute(sensors[0]) && routes.isOnRoute(sensors[1]) && !routes.isOnRoute(sensors[2]);
+		int onRoute = 0;
+		int exponent = 1;
 
-		return onRoute ? 1 : 0;
+		for (int i = 0; i < sensors.length; i++) {
+			onRoute += routes.isOnRoute(sensors[i]) ? exponent : 0;
+
+			exponent *= 2;
+		}
+
+		return onRoute;
 	}
 
 	@Override
@@ -34,11 +42,12 @@ public class World implements Environment {
 	}
 
 	private int getReward(int onRoute, int action) {
+		int reward = onRoute == 2 ? CarDriveState.getState(action).actionValue * 10 : -100;
 
-		int reward = onRoute == 0 ? -100 : CarDriveState.getState(action).actionValue * 10;
-		if (onRoute == 1) {
-			Gdx.app.log("World", "action:" + CarDriveState.getState(action).name() + ", onRoad:" + onRoute + " -> reward:" + reward);
-		}
+		//if (onRoute == 2) {
+			//Gdx.app.log("World", "" + counter++ + ". action:" + CarDriveState.getState(action).name() + ", onRoad:" + onRoute + " -> reward:" + reward);
+		//}
+
 		return reward;
 	}
 
@@ -54,6 +63,6 @@ public class World implements Environment {
 
 	@Override
 	public int getNumberOfStates() {
-		return 2;
+		return 8;
 	}
 }

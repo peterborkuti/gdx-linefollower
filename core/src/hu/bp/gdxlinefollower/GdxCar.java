@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import hu.bp.ai.util.MLUtil;
 import hu.bp.linefollowerrobot.Car;
 import org.ejml.simple.SimpleMatrix;
 
@@ -35,7 +36,7 @@ public class GdxCar {
 	}
 
 	public Vector3[] getSensorsWordCoordinates() {
-		return Arrays.copyOf(sensorPositionsInWorldCoordinates, SENSOR_NUM);
+		return sensorPositionsInWorldCoordinates;
 	}
 
 	public CarState goCar(CarDriveState state) {
@@ -144,6 +145,7 @@ public class GdxCar {
 		Vector3 coordInRenderer = new Vector3(x, y, 0);
 		Vector3 coordInWorld = coordInRenderer.prj(renderer.getTransformMatrix());
 
+		Gdx.app.log("GdxCar", "(" + x + "," + y +")->" + coordInWorld);
 		return coordInWorld;
 	}
 
