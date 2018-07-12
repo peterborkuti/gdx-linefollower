@@ -41,6 +41,7 @@ public class GdxLineFollower extends ApplicationAdapter {
 	private Random rnd = new Random();
 
 	private Routes routes;
+	private GdxRoutes gdxRoutes;
 	private GdxCar gdxCar;
 
 	private long counter = 0;
@@ -55,6 +56,7 @@ public class GdxLineFollower extends ApplicationAdapter {
 		Car car = new Car(40, 11.66666667);
 		gdxCar = new GdxCar(car, WORLD_WIDTH, WORLD_HEIGHT,  WORLD_WIDTH, WORLD_HEIGHT);
 		routes.createRandomRoutes(10, 90, 50);
+		gdxRoutes = new GdxRoutes(routes, WORLD_WIDTH, WORLD_HEIGHT);
 
 		world = new World(gdxCar, routes);
 		agent = new LineFollowerAgent(world);
@@ -87,7 +89,7 @@ public class GdxLineFollower extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0, 1, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		routes.drawRoutes(Color.BLUE);
+		gdxRoutes.drawRoutes(Color.BLUE);
 		qLearning();
 		//randomDriving();
 		gdxCar.drawCar();

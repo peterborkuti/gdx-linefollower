@@ -19,8 +19,7 @@ public class World implements Environment {
 		this.routes = routes;
 	}
 
-	private int getOnRoute() {
-		Vector3[] sensors = gdxCar.getSensorsWordCoordinates();
+	public int getOnRoute(Vector3[] sensors) {
 		int onRoute = 0;
 		int exponent = 1;
 
@@ -38,10 +37,10 @@ public class World implements Environment {
 		Gdx.app.log("World", "RESET");
 		gdxCar.setState(new CarState(0, 0, 0));
 
-		return getOnRoute();
+		return getOnRoute(gdxCar.getSensorsWordCoordinates());
 	}
 
-	private int getReward(int onRoute, int action) {
+	public int getReward(int onRoute, int action) {
 		int reward = onRoute == 2 ? CarDriveState.getState(action).actionValue * 10 : -100;
 
 		//if (onRoute == 2) {
@@ -56,7 +55,7 @@ public class World implements Environment {
 		CarState carState = gdxCar.goCar(CarDriveState.getState(action));
 		gdxCar.setState(carState);
 
-		int observation = getOnRoute();
+		int observation = getOnRoute(gdxCar.getSensorsWordCoordinates());
 
 		return new Step(observation, getReward(observation, action), false);
 	}

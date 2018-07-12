@@ -1,41 +1,38 @@
 package hu.bp.gdxlinefollower;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
-public class Routes {
+public class Routes implements IterableRectangles, StreamableRectangles {
 	private final int WORLD_WIDTH;
 	private final int WORLD_HEIGHT;
 	private final List<Rectangle> rectangles;
-	private final ShapeRenderer renderer;
+
+	public Routes() {
+		this(1000, 1000);
+	}
 
 	public Routes(int WORLD_WIDTH, int WORLD_HEIGHT) {
 		this.WORLD_WIDTH = WORLD_WIDTH;
 		this.WORLD_HEIGHT = WORLD_HEIGHT;
 		rectangles = new ArrayList<>();
-		renderer = new ShapeRenderer();
-		renderer.setProjectionMatrix(new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT).combined);
+	}
+
+	@Override
+	public Iterator<Rectangle> getIterator() {
+		return rectangles.iterator();
 	}
 
 	public boolean isOnRoute(Vector3 point) {
-		boolean onRoute = rectangles.stream().anyMatch(i -> i.contains(point.x, point.y));
-
-		if (onRoute) {
-			Gdx.app.log("Routes", "onroute");
-		}
+		boolean onRoute = rectangles.stream().anyMatch(rect -> rect.contains(point.x, point.y));
 
 		return onRoute;
 	}
@@ -47,11 +44,15 @@ public class Routes {
 						collect(Collectors.toList()));
 	}
 
+	public void addRectangle(Rectangle rectangle) {
+		rectangles.add(rectangle);
+	}
+
 	private Rectangle getRandomRoute(int maxWidth, int minLength) {
 		Random rnd = new Random();
 
-		int x = rnd.nextInt(WORLD_WIDTH);
-		int y = rnd.nextInt(WORLD_HEIGHT);
+		int x = rnd.nextInt(WORLD_WIDTH) - WORLD_WIDTH / 2;
+		int y = rnd.nextInt(WORLD_HEIGHT) - WORLD_HEIGHT / 2;
 
 		int width, height;
 
@@ -76,7 +77,7 @@ public class Routes {
 		int delta = space + routeWidth;
 
 		for (int i = 0; x > -WORLD_WIDTH / 2 && y > -WORLD_HEIGHT / 2; i++) {
-			createRoute(x, y, squareWidth, squareHeight, routeWidth);
+			createRectangleRoute(x, y, squareWidth, squareHeight, routeWidth);
 
 			x -= delta;
 			y -= delta;
@@ -85,19 +86,15 @@ public class Routes {
 		}
 	}
 
-	public void drawRoutes(Color color) {
-		renderer.setColor(color);
-		renderer.begin(ShapeRenderer.ShapeType.Filled);
-
-		rectangles.forEach(rect -> renderer.rect(rect.x, rect.y, rect.width, rect. height));
-
-		renderer.end();
-	}
-
-	private void createRoute(int x, int y, int width, int height, int routeWidth) {
+	private void createRectangleRoute(int x, int y, int width, int height, int routeWidth) {
 		rectangles.add(new Rectangle(x, y, routeWidth, height)); //left
 		rectangles.add(new Rectangle(x, y + height - routeWidth, width, routeWidth)); //top
 		rectangles.add(new Rectangle(x, y, width, routeWidth)); //bottom
 		rectangles.add(new Rectangle(x + width, y, routeWidth, height)); //right
+	}
+
+	@Override
+	public Stream<Rectangle> stream() {
+		return rectangles.stream();
 	}
 }
